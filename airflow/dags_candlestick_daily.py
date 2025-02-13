@@ -1,14 +1,12 @@
 from airflow import DAG
-from plugins.operators.DataExtractOperator import DataExtractOperator
 from scripts.upload_to_storage import upload_to_blob_storage
+from scripts.candlestick_data import CandleStick_Daily
 from airflow.operators.python import PythonOperator
-from airflow.models import Variable
-from airflow.models.baseoperator import BaseOperator
 import pendulum
-import json
+
 
 with DAG(
-    dag_id='dags_historical_data_extractor',
+    dag_id='dags_candlestick_daily',
     start_date=pendulum.datetime(2023,3,1,tz='Asia/Seoul'),
     catchup=False,
     schedule_interval='* * * * *'
@@ -16,35 +14,26 @@ with DAG(
 ) as dag:
 
     start_date = pendulum.datetime(2024, 6, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 6, 30, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 6, 10, tz='Asia/Seoul')
     specified_date = start_date
 
     while specified_date < end_date:
-        date_str = specified_date.format("")
 
-        extract_task = DataExtractOperator(
-            task_id="extract_task",
-            http_conn_id="",
-            endpoint="",
-            dag=dag
+        date_str = specified_date.format('YYYY-MM-DD')
+
+        candlestick_daily_data = PythonOperator(
+            task_id=f"candlestick_daily_data_{date_str}",
+            python_callable=CandleStick_Daily
         )
 
         upload_blob_task = PythonOperator(
             task_id="upload_blob_task",
             python_callable=upload_to_blob_storage,
-            op_args="",
+            op_args=[date_str],
+            op_kwargs={"directory":"candlestick-storage"},
             provide_context=True,
             dag=dag
         )
 
-        extract_task >> upload_blob_task
-
+        candlestick_daily_data >> upload_blob_task
         specified_date = specified_date.add(days=1)
-
-
-
-
-
-
-
-
