@@ -1,6 +1,6 @@
 import sys
 import os
-
+#절대 경로 추가
 sys.path.append('/opt/airflow/plugins')
 
 from airflow import DAG
