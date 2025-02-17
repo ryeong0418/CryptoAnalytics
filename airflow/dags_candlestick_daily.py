@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../plugins"))
+
 from airflow import DAG
 from scripts.upload_to_storage import upload_to_blob_storage
 from scripts.candlestick_data import CandleStick_Daily
