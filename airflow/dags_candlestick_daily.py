@@ -32,7 +32,7 @@ with DAG(
         )
 
         upload_blob_task = PythonOperator(
-            task_id="upload_blob_task",
+            task_id=f"upload_blob_task_{date_str}",
             python_callable=upload_to_blob_storage,
             op_args=[date_str],
             op_kwargs={"directory":"candlestick-storage"},
