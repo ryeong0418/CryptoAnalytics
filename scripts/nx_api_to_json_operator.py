@@ -14,10 +14,13 @@ class NxApiToJsonOperator(BaseOperator):
     def __init__(self, http_conn_id, endpoint, **kwargs):
         super().__init__(**kwargs)
         self.http_conn_id = http_conn_id
+        print('self.http_conn_id',self.http_conn_id)
         self.endpoint = endpoint
+        print('self.endpoint', self.endpoint)
 
     def execute(self, context):
         connection = BaseHook.get_connection(self.http_conn_id)
+        print(connection)
         logging.info(f"connection:{connection}")
         self.URI = f'{connection.host}{self.endpoint}'
 
