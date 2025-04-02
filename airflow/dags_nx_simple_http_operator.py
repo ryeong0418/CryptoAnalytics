@@ -15,8 +15,8 @@ def upload_to_blob_storage(date_str, **kwargs):
     rslt = ti.xcom_pull(task_ids=f'nx_info_{date_str}')
     print(rslt)
 
-    conn_str = Variable.get('connection_string')
-    container_name = "strcontainer"
+    conn_str = Variable.get('carrot_source_storage')
+    container_name = "sourcecontainer"
 
     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
     container_client = blob_service_client.get_container_client(container_name)
@@ -42,7 +42,7 @@ with DAG(
 ) as dag:
 
     start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 31, tz='Asia/Seoul')
     current_date = start_date
 
     while current_date < end_date:
