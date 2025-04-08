@@ -14,7 +14,8 @@ def fetch_and_upload_by_date(execution_date: str):
         upload_to_blob_storage(
             data=data,
             filename=filename,
-            directory=f"{market_dir}"
+            directory=f"{market_dir}",
+            market=market
         )
         print(f"✅ {execution_date} {market} 업로드 완료")
 
