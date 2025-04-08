@@ -25,7 +25,7 @@ def upload_to_blob_storage(data, filename, directory, market=None):
 
     try:
         blob_client = container_client.get_blob_client(storage_position)
-        blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
+        blob_client.upload_blob(data, blob_type="BlockBlob")
 
         print(f"✅ 업로드 완료: {storage_position}")
         return "Upload successful"
