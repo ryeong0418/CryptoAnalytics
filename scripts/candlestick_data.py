@@ -11,7 +11,7 @@ class CandleStick():
 
     def get_market_list(self):
 
-        total_market_list= []
+        total_market_list = []
         headers = {'accept':'application/json'}
         response = requests.get(self.all_market, headers=headers)
         data = response.json()
@@ -24,19 +24,20 @@ class CandleStick():
 
 
 class CandleStick_Daily(CandleStick):
-    ''''''
+
     def __init__(self):
         super().__init__()
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
 
-    def extract_daily_data(self):
+    def extract_daily_data(self, execution_date):
 
+        all_data = []
         for market in self.market_list:
 
             params = {
                 'market': market,
                 'count':1,
-                'to':'2024-10-01 00:00:00'
+                'to': execution_date
 
             }
 
@@ -47,10 +48,10 @@ class CandleStick_Daily(CandleStick):
                 raise ValueError(f"HTTP Error: {response.status_code} - {response.reason}")
 
             daily_candle_data = response.json()
-            data_json = json.dumps(daily_candle_data, indent=4, sort_keys=True, ensure_ascii=False)
+            all_data.append(daily_candle_data)
+            # data_json = json.dumps(daily_candle_data, indent=4, sort_keys=True, ensure_ascii=False)
 
-            return data_json
-
+        return all_data
 
 # candlestick_daily = CandleStick_Daily()
 # candlestick_daily.extract_daily_data()
