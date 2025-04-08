@@ -10,12 +10,10 @@ def fetch_and_upload_by_date(execution_date: str):
     for market, data in all_market_data.items():
 
         filename = f"{execution_date[:10]}.json"
-        market_dir = market.replace("-","_")
         upload_to_blob_storage(
             data=data,
             filename=filename,
-            directory=f"{market_dir}",
-            market=market
+            directory=f"{market}"
         )
         print(f"✅ {execution_date} {market} 업로드 완료")
 

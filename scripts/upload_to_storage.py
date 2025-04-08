@@ -12,13 +12,14 @@ def upload_to_blob_storage(data, filename, directory, market=None):
 
     # market_dir = market.replace("-","_") if market else "default"
     storage_position = f"{directory}/{filename}"
-
     init_blob_path = f"{directory}/.init"
+
     try:
         blob_client = container_client.get_blob_client(init_blob_path)
         if not blob_client.exists():
             blob_client.upload_blob(b"", overwrite=True)
             print(f"📁 Market 디렉토리 초기화: {directory}")
+
     except Exception as e:
         print(f"❗ Market 디렉토리 초기화 실패: {e}")
 
