@@ -2,10 +2,9 @@
 def upload_to_blob_storage(data, filename, directory, market=None):
 
     from azure.storage.blob import BlobServiceClient
-    import json
-    import os
+    from airflow.models import Variable
 
-    conn_str = os.getenv('candlestick_storage_connection_string')
+    conn_str = Variable.get('candlestick_storage_connection_string')
     container_name = 'candlestick2024'
 
     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
