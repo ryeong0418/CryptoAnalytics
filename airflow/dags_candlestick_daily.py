@@ -18,8 +18,9 @@ with DAG(
 ) as dag:
 
     start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 12, 31, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
     specified_date = start_date
+
 
     while specified_date < end_date:
 
@@ -27,7 +28,8 @@ with DAG(
 
         candlestick_daily_data = PythonOperator(
             task_id=f"candlestick_daily_data_{execution_date}",
-            python_callable=CandleStick_Daily
+            python_callable=CandleStick_Daily,
+            op_args=execution_date
         )
 
         upload_blob_task = PythonOperator(

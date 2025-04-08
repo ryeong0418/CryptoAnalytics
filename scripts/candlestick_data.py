@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime, timedelta
 
 
 class CandleStick():
@@ -30,8 +31,8 @@ class CandleStick_Daily(CandleStick):
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
 
     def extract_daily_data(self, execution_date):
+        result = {}
 
-        all_data = []
         for market in self.market_list:
 
             params = {
@@ -45,13 +46,12 @@ class CandleStick_Daily(CandleStick):
             response = requests.get(self.candles_days, params=params, headers=headers)
 
             if response.status_code != 200:
-                raise ValueError(f"HTTP Error: {response.status_code} - {response.reason}")
+                print(f"❌ {market} 실패: {response.status_code}")
+                continue
 
             daily_candle_data = response.json()
-            all_data.append(daily_candle_data)
-            # data_json = json.dumps(daily_candle_data, indent=4, sort_keys=True, ensure_ascii=False)
+            data_json = json.dumps(daily_candle_data, indent=4, sort_keys=True, ensure_ascii=False)
 
-        return all_data
+            result[market] = data_json
 
-# candlestick_daily = CandleStick_Daily()
-# candlestick_daily.extract_daily_data()
+        return result

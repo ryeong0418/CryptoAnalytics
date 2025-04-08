@@ -1,58 +1,36 @@
-from azure.storage.blob import BlobServiceClient
-import json
-from dotenv import load_dotenv
-import os
 
+def upload_to_blob_storage(data, filename, directory, market=None):
 
-def upload_to_blob_storage(date_str, directory, **kwargs):
+    from azure.storage.blob import BlobServiceClient
+    import json
+    import os
 
-    load_dotenv()
-
-    print(date_str,directory)
-
-    ti = kwargs['ti']
-    rslt = ti.xcom_pull(task_ids=f"candlestick_daily_data_{date_str}")
-
-    conn_str = os.getenv('CONNECTION_STRING')
-    container_name = os.getenv('CONTAINER_NAME')
+    conn_str = os.getenv('candlestick_storage_connection_string')
+    container_name = 'candlestick2024'
 
     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
     container_client = blob_service_client.get_container_client(container_name)
 
-    raw_data = rslt
-    filename = f"candlestick_daily_data_{date_str}"
-    storage_position = f"{directory}/{filename}"
+    market_dir = market.replace("-","_") if market else "default"
+    storage_position = f"{directory}/{market_dir}/{filename}"
+
+    init_blob_path = f"{directory}/{market_dir}/.init"
+    try:
+        blob_client = container_client.get_blob_client(init_blob_path)
+        if not blob_client.exists():
+            blob_client.upload_blob(b"", overwrite=True)
+            print(f"📁 Market 디렉토리 초기화: {market_dir}")
+    except Exception as e:
+        print(f"❗ Market 디렉토리 초기화 실패: {e}")
 
     try:
         blob_client = container_client.get_blob_client(storage_position)
-        data_json = json.dumps(raw_data, indent=4, sort_keys=True, ensure_ascii=False)
-        blob_client.upload_blob(data_json, blob_type="BlockBlob")
+        blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
 
+        print(f"✅ 업로드 완료: {storage_position}")
         return "Upload successful"
 
     except Exception as e:
+        print(f"❌ 업로드 실패: {storage_position}")
         return f"An error occurred while uploading to Blob Storage: {str(e)}"
 
-# def upload_to_blob_storage(market, date_str, conn_str, container_name, data_json, directory,**kwargs):
-#     ti = kwargs['ti']
-#     rslt = ti.xcom_pull(task_ids=f"candlestick_daily_data_{date_str}")
-#
-#     filename = f"{market}-{date_str}.json"
-#     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
-#     container_client = blob_service_client.get_container_client(container_name)
-#
-#     try:
-#         storage_position=f"{directory}/{filename}"
-#         blob_clinet = container_client.get_blob_client(storage_position)
-#         data_json = json.dumps(data_json, indent=4, sort_keys=True, ensure_ascii=False)
-#         blob_clinet.upload_blob(data_json, blob_type='BlockBlob')
-#
-#     except json.JSONDecodeError as e:
-#         print(f"JSON encoding/decoding error: {str(e)}. Please check the input data structure.")
-#
-#     except Exception as e:
-#         print(f"An unexpected error occurred: {str(e)}")
-#
-#
-# if __name__ == "__main__":
-#     upload_to_blob_storage()
