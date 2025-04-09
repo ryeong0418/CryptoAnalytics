@@ -28,17 +28,18 @@ with DAG(
 
         candlestick_daily_data = CandleStickDailyOperator(
             task_id=f"candlestick_daily_data_{execution_date}",
-            execution_date=execution_date
-        )
-
-        upload_blob_task = PythonOperator(
-            task_id=f"upload_blob_task_{execution_date}",
-            python_callable=upload_to_blob_storage,
-            op_args=[execution_date],
-            op_kwargs={"directory":"candlestick-storage"},
-            provide_context=True,
+            execution_date=execution_date,
             dag=dag
         )
+        #
+        # upload_blob_task = PythonOperator(
+        #     task_id=f"upload_blob_task_{execution_date}",
+        #     python_callable=upload_to_blob_storage,
+        #     op_args=[execution_date],
+        #     op_kwargs={"directory":"candlestick-storage"},
+        #     provide_context=True,
+        #     dag=dag
+        # )
 
-        candlestick_daily_data >> upload_blob_task
+        # candlestick_daily_data >> upload_blob_task
         specified_date = specified_date.add(days=1)
