@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 def fetch_and_upload_upbit_data_full_year():
     start_date = datetime(2024, 1, 1)
-    end_date = datetime(2024, 1, 31)
+    end_date = datetime(2024, 12, 31)
     current_date = start_date
 
     while current_date <= end_date:
