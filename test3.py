@@ -8,7 +8,7 @@ print(data)
 
 for i in data:
     if i['market'] in ['KRW-BTC','KRW-ETH','KRW-XRP']:
-        print(i)
+        print(i['market'])
 
 # for i in data:
 #     if i['korean_name'] in ['이더리움', '비트코인', '엑스알피']:

@@ -22,9 +22,7 @@ class CandleStickDailyOperator(BaseOperator):
             params = {
                 'market': market,
                 'to': self.execution_date
-
             }
-
             headers = {'accept':'application/json'}
             response = requests.get(self.candles_days, params=params, headers=headers)
 
