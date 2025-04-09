@@ -17,7 +17,7 @@ class CandleStick():
         data = response.json()
 
         for i in data:
-            if i['korean_name'] in ['이더리움', '비트코인', '엑스알피']:
+            if i['market'].split('-')[0] == 'KRW':
                 total_market_list.append(i['market'])
 
         return total_market_list
