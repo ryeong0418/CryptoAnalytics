@@ -1,35 +1,19 @@
+from airflow.models.baseoperator import BaseOperator
+from scripts.common.utils import SystemUtils
 import requests
 import json
 
 
-class CandleStick():
+class CandleStickDailyOperator(BaseOperator):
 
-    def __init__(self):
-
+    def __init__(self, execution_date:str, **kwargs):
+        super().__init__(**kwargs)
+        self.execution_date = execution_date
         self.all_market = "https://api.upbit.com/v1/market/all"
-        self.market_list = self.get_market_list()
-
-    def get_market_list(self):
-
-        total_market_list = []
-        headers = {'accept':'application/json'}
-        response = requests.get(self.all_market, headers=headers)
-        data = response.json()
-
-        for i in data:
-            if i['market'] in ['KRW-BTC', 'KRW-ETH', 'KRW-XRP']:
-                total_market_list.append(i['market'])
-
-        return total_market_list
-
-
-class CandleStick_Daily(CandleStick):
-
-    def __init__(self):
-        super().__init__()
+        self.market_list = SystemUtils.get_market_list(self.all_market)
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
 
-    def extract_daily_data(self, execution_date):
+    def execute(self, context):
         result = {}
 
         for market in self.market_list:
@@ -37,7 +21,7 @@ class CandleStick_Daily(CandleStick):
             params = {
                 'market': market,+
                 'count':1,
-                'to': execution_date
+                'to': self.execution_date
 
             }
 

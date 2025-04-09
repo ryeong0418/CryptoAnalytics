@@ -7,7 +7,7 @@ data = response.json()
 print(data)
 
 for i in data:
-    if i['market'].split('-')[0] == 'KRW':
+    if i['market'] in ['KRW-BTC','KRW-ETH','KRW-XRP']:
         print(i)
 
 # for i in data:

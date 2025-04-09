@@ -1,40 +1,44 @@
-from airflow.decorators import dag, task
-from scripts.fetch_and_upload import fetch_and_upload_by_date
-from datetime import datetime, timedelta
+import sys
+import os
+#절대 경로 추가
+sys.path.append('/opt/airflow/plugins')
+
+from airflow import DAG
+from scripts.upload_to_storage import upload_to_blob_storage
+from scripts.candlestick_daily import CandleStickDailyOperator
+from airflow.operators.python import PythonOperator
 import pendulum
 
 
-# ✅ 날짜 리스트 생성 함수
-def generate_date_list(start: datetime, end: datetime):
-    date_list = []
-    current = start
-    while current <= end:
-        date_list.append(current.strftime('%Y-%m-%dT00:00:00'))
-        current += timedelta(days=1)
-    return date_list
-
-# ✅ DAG 정의
-@dag(
-    dag_id = 'dags_historical_candlestick_data',
-    start_date=pendulum.datetime(2024, 1, 1, tz='Asia/Seoul'),
+with DAG(
+    dag_id='dags_historical_candlestick_data',
+    start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule_interval='@once',
-    catchup=False,
-    tags=['candlestick', 'backfill'],
-    max_active_tasks=20  # 동시에 실행할 태스크 수
-)
+    catchup=False
+) as dag:
 
-def backfill_upbit_dag():
-
-    @task
-    def run_by_date(date_str:str):
-        print(f"📅 실행 날짜: {date_str}")
-        fetch_and_upload_by_date(date_str)
-
-    start_date=datetime(2024,1,1)
-    end_date=datetime(2024,12,31)
-    date_list = generate_date_list(start_date, end_date)
-
-    run_by_date.expand(date_str=date_list)
+    start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
+    specified_date = start_date
 
 
-dag = backfill_upbit_dag()
+    while specified_date < end_date:
+
+        execution_date = specified_date.format('YYYY-MM-DD')
+
+        candlestick_daily_data = CandleStickDailyOperator(
+            task_id=f"candlestick_daily_data_{execution_date}",
+            execution_date=execution_date
+        )
+
+        upload_blob_task = PythonOperator(
+            task_id=f"upload_blob_task_{execution_date}",
+            python_callable=upload_to_blob_storage,
+            op_args=[execution_date],
+            op_kwargs={"directory":"candlestick-storage"},
+            provide_context=True,
+            dag=dag
+        )
+
+        candlestick_daily_data >> upload_blob_task
+        specified_date = specified_date.add(days=1)

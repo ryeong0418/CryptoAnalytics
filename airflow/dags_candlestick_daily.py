@@ -11,7 +11,7 @@ import pendulum
 
 
 with DAG(
-    dag_id='dags_backfill_upbit_data',
+    dag_id='dags_candlestick_daily',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule_interval='@once',
     catchup=False
