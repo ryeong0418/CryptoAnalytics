@@ -1,8 +1,13 @@
+from scripts.common.utils import SystemUtils
 
-def upload_to_blob_storage(data, filename, directory, market=None):
+
+def upload_to_blob_storage(execution_date, market_url, **kwargs):
 
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
+
+    ti = kwargs['ti']
+    data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
 
     conn_str = Variable.get('candlestick_storage_connection_string')
     container_name = 'candlestick2024'
@@ -10,27 +15,28 @@ def upload_to_blob_storage(data, filename, directory, market=None):
     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
     container_client = blob_service_client.get_container_client(container_name)
 
+    market_list = SystemUtils.get_market_list(market_url)
     # market_dir = market.replace("-","_") if market else "default"
-    storage_position = f"{directory}/{filename}"
-    init_blob_path = f"{directory}/.init"
+    filename = f"{execution_date[:10]}.json"
 
-    try:
-        blob_client = container_client.get_blob_client(init_blob_path)
-        if not blob_client.exists():
-            blob_client.upload_blob(b"", overwrite=True)
-            print(f"📁 Market 디렉토리 초기화: {directory}")
+    for market in market_list:
+        storage_position = f"{market}/{filename}"
+        init_blob_path = f"{market}/.init"
 
-    except Exception as e:
-        print(f"❗ Market 디렉토리 초기화 실패: {e}")
+        try:
+            blob_client = container_client.get_blob_client(init_blob_path)
+            if not blob_client.exists():
+                blob_client.upload_blob(b"", overwrite=True)
+                print(f"📁 Market 디렉토리 초기화: {market}")
+        except Exception as e:
+            print(f"❗ Market 디렉토리 초기화 실패: {e}")
 
-    try:
-        blob_client = container_client.get_blob_client(storage_position)
-        blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
-
-        print(f"✅ 업로드 완료: {storage_position}")
-        return "Upload successful"
-
-    except Exception as e:
-        print(f"❌ 업로드 실패: {storage_position}")
-        return f"An error occurred while uploading to Blob Storage: {str(e)}"
+        try:
+            blob_client = container_client.get_blob_client(storage_position)
+            blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
+            print(f"✅ 업로드 완료: {storage_position}")
+            return "Upload successful"
+        except Exception as e:
+            print(f"❌ 업로드 실패: {storage_position}")
+            return f"An error occurred while uploading to Blob Storage: {str(e)}"
 

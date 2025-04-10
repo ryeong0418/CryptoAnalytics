@@ -21,7 +21,6 @@ with DAG(
     end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
     specified_date = start_date
 
-
     while specified_date < end_date:
 
         execution_date = specified_date.format('YYYY-MM-DD')
@@ -31,15 +30,15 @@ with DAG(
             execution_date=execution_date,
             dag=dag
         )
-        #
-        # upload_blob_task = PythonOperator(
-        #     task_id=f"upload_blob_task_{execution_date}",
-        #     python_callable=upload_to_blob_storage,
-        #     op_args=[execution_date],
-        #     op_kwargs={"directory":"candlestick-storage"},
-        #     provide_context=True,
-        #     dag=dag
-        # )
 
-        # candlestick_daily_data >> upload_blob_task
+        upload_blob_task = PythonOperator(
+            task_id=f"upload_blob_task_{execution_date}",
+            python_callable=upload_to_blob_storage,
+            op_args=[execution_date],
+            op_kwargs={"market_url": "https://api.upbit.com/v1/market/all"},
+            provide_context=True,
+            dag=dag
+        )
+
+        candlestick_daily_data >> upload_blob_task
         specified_date = specified_date.add(days=1)

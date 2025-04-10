@@ -9,7 +9,6 @@ class CandleStickDailyOperator(BaseOperator):
     def __init__(self, execution_date:str, **kwargs):
         super().__init__(**kwargs)
         self.execution_date = execution_date
-        print(self.execution_date)
         self.all_market = "https://api.upbit.com/v1/market/all"
         self.market_list = SystemUtils.get_market_list(self.all_market)
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
