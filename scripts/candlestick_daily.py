@@ -20,12 +20,11 @@ class CandleStickDailyOperator(BaseOperator):
         print(self.market_list)
 
         for market in self.market_list:
-            print('*'*100)
-            print('execution_date', self.execution_date)
 
+            to_param = f"{self.execution_date}T00:00:00"
             params = {
                 'market': market,
-                'to': self.execution_date
+                'to': to_param
             }
             headers = {'accept':'application/json'}
             response = requests.get(self.candles_days, params=params, headers=headers)
