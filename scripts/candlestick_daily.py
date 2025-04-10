@@ -16,8 +16,12 @@ class CandleStickDailyOperator(BaseOperator):
 
     def execute(self, context):
         result = {}
+        print("마켓 리스트")
+        print(self.market_list)
 
         for market in self.market_list:
+            print('*'*100)
+            print('execution_date', self.execution_date)
 
             params = {
                 'market': market,
