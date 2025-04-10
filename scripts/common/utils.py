@@ -12,7 +12,7 @@ class SystemUtils:
         data = response.json()
 
         for i in data:
-            if i['market'] in ['KRW-BTC', 'KRW-ETH', 'KRW-XRP']:
+            if isinstance(i,dict) and i.get('market') in ['KRW-BTC', 'KRW-ETH', 'KRW-XRP']:
                 total_market_list.append(i['market'])
 
         return total_market_list
