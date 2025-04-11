@@ -10,15 +10,16 @@ class CandleStickDailyOperator(BaseOperator):
         super().__init__(**kwargs)
         self.execution_date = execution_date
         self.all_market = "https://api.upbit.com/v1/market/all"
-        self.market_list = SystemUtils.get_market_list(self.all_market)
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
 
     def execute(self, context):
         result = {}
-        print("마켓 리스트")
-        print(self.market_list)
 
-        for market in self.market_list:
+        market_list = SystemUtils.get_market_list(self.all_market)
+        print("마켓 리스트")
+        print(market_list)
+
+        for market in market_list:
 
             to_param = f"{self.execution_date}T00:00:00"
             params = {
