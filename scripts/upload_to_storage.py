@@ -2,13 +2,14 @@ from scripts.common.utils import SystemUtils
 
 
 def upload_to_blob_storage(market_url, **kwargs):
-
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
 
     execution_date = kwargs['execution_date'].strftime('%Y-%m-%d')
+    print('execution_date',execution_date)
     ti = kwargs['ti']
     data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
+    print('candlestick_daily_data', data)
 
     conn_str = Variable.get('candlestick_storage_connection_string')
     container_name = 'candlestick2024'
@@ -21,7 +22,9 @@ def upload_to_blob_storage(market_url, **kwargs):
 
     for market in market_list:
         storage_position = f"{market}/{filename}"
+        print('storage_position', storage_position)
         init_blob_path = f"{market}/.init"
+        print('init_blob_path', init_blob_path)
 
         try:
             blob_client = container_client.get_blob_client(init_blob_path)
