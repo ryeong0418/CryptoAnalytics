@@ -21,7 +21,6 @@ with DAG(
     end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
     specified_date = start_date
 
-
     while specified_date < end_date:
 
         execution_date = specified_date.format('YYYY-MM-DD')

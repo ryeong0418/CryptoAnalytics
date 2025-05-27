@@ -35,12 +35,12 @@ class CandleStick_Daily(CandleStick):
         for market in self.market_list:
 
             params = {
-                'market': market,+
+                'market': market,
                 'count':1,
                 'to': execution_date
 
             }
-
+            print(market)
             headers = {'accept':'application/json'}
             response = requests.get(self.candles_days, params=params, headers=headers)
 
