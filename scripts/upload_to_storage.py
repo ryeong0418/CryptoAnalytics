@@ -40,7 +40,8 @@ def upload_to_blob_storage(market_url, execution_date, **kwargs):
 
         try:
             blob_client = container_client.get_blob_client(storage_position)
-            blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
+            market_data = data.get(market, None)
+            blob_client.upload_blob(market_data.encode('utf-8'), blob_type="BlockBlob", overwrite=True)
             print(f"✅ 업로드 완료: {storage_position}")
             return "Upload successful"
         except Exception as e:
