@@ -40,5 +40,6 @@ class CandleStickDailyOperator(BaseOperator):
             daily_candle_data = response.json()
             data_json = json.dumps(daily_candle_data, indent=4, sort_keys=True, ensure_ascii=False)
             result[market] = data_json
+            print(result[market])
 
         return result
