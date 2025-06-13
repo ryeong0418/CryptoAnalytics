@@ -4,8 +4,9 @@ from scripts.common.utils import SystemUtils
 def upload_to_blob_storage(market_url, execution_date, **kwargs):
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
+    print(execution_date)
 
-    execution_date_str = execution_date.strftime('%Y-%m-%d')
+    execution_date_str = execution_date
     print('******************************')
     print('execution_date',execution_date_str)
     print('******************************')
