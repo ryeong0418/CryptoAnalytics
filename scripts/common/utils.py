@@ -16,3 +16,4 @@ class SystemUtils:
                 total_market_list.append(i['market'])
 
         return total_market_list
+
