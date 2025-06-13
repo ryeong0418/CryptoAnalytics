@@ -20,31 +20,24 @@ def upload_to_blob_storage(market_url, execution_date, **kwargs):
     container_client = blob_service_client.get_container_client(container_name)
 
     market_list = SystemUtils.get_market_list(market_url)
-    # market_dir = market.replace("-","_") if market else "default"
-    # filename = f"{execution_date[:10]}.json"
+    print('*'*100)
+    print(market_list)
 
     for market in market_list:
+        print('*'*100)
+        print(market)
         filename = f'{market}-{execution_date_str}.json'
         storage_position = f"{market}/{filename}"
         print('storage_position', storage_position)
-        # init_blob_path = f"{market}/.init"
-        # print('init_blob_path', init_blob_path)
-        #
-        # try:
-        #     blob_client = container_client.get_blob_client(init_blob_path)
-        #     if not blob_client.exists():
-        #         blob_client.upload_blob(b"", overwrite=True)
-        #         print(f"📁 Market 디렉토리 초기화: {market}")
-        # except Exception as e:
-        #     print(f"❗ Market 디렉토리 초기화 실패: {e}")
 
         try:
             blob_client = container_client.get_blob_client(storage_position)
             market_data = data.get(market, None)
             blob_client.upload_blob(market_data.encode('utf-8'), blob_type="BlockBlob", overwrite=True)
             print(f"✅ 업로드 완료: {storage_position}")
-            return "Upload successful"
+
         except Exception as e:
             print(f"❌ 업로드 실패: {storage_position}")
-            return f"An error occurred while uploading to Blob Storage: {str(e)}"
+
+    return "All uploads attempted"
 
