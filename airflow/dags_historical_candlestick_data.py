@@ -34,7 +34,8 @@ with DAG(
         upload_blob_task = PythonOperator(
             task_id=f"upload_blob_task_{execution_date}",
             python_callable=upload_to_blob_storage,
-            op_kwargs={"market_url": "https://api.upbit.com/v1/market/all"},
+            op_kwargs={"market_url": "https://api.upbit.com/v1/market/all",
+                       "execution_date":execution_date},
             provide_context=True,
             dag=dag
         )

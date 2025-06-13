@@ -1,16 +1,16 @@
 from scripts.common.utils import SystemUtils
 
 
-def upload_to_blob_storage(market_url, **kwargs):
+def upload_to_blob_storage(market_url, execution_date, **kwargs):
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
 
-    execution_date = kwargs['execution_date'].strftime('%Y-%m-%d')
+    execution_date_str = execution_date.strftime('%Y-%m-%d')
     print('******************************')
-    print('execution_date',execution_date)
+    print('execution_date',execution_date_str)
     print('******************************')
     ti = kwargs['ti']
-    data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
+    data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date_str}")
     print('candlestick_daily_data', data)
 
     conn_str = Variable.get('azure_storage_connection_string')
@@ -23,7 +23,7 @@ def upload_to_blob_storage(market_url, **kwargs):
     # filename = f"{execution_date[:10]}.json"
 
     for market in market_list:
-        filename = f'{market}-{execution_date}.json'
+        filename = f'{market}-{execution_date_str}.json'
         storage_position = f"{market}/{filename}"
         print('storage_position', storage_position)
         # init_blob_path = f"{market}/.init"
