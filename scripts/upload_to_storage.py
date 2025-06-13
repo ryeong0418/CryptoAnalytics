@@ -1,11 +1,11 @@
 from scripts.common.utils import SystemUtils
 
 
-def upload_to_blob_storage(market_url, **kwargs):
+def upload_to_blob_storage(execution_date, market_url, **kwargs):
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
 
-    execution_date = kwargs['execution_date'].strftime('%Y-%m-%d')
+    execution_date = execution_date.strftime('%Y-%m-%d')
     print('execution_date',execution_date)
     ti = kwargs['ti']
     data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
