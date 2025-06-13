@@ -1,12 +1,14 @@
 from scripts.common.utils import SystemUtils
 
 
-def upload_to_blob_storage(execution_date, market_url, **kwargs):
+def upload_to_blob_storage(market_url, **kwargs):
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
 
-    execution_date = execution_date.strftime('%Y-%m-%d')
+    execution_date = kwargs['execution_date'].strftime('%Y-%m-%d')
+    print('******************************')
     print('execution_date',execution_date)
+    print('******************************')
     ti = kwargs['ti']
     data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
     print('candlestick_daily_data', data)
@@ -18,21 +20,22 @@ def upload_to_blob_storage(execution_date, market_url, **kwargs):
 
     market_list = SystemUtils.get_market_list(market_url)
     # market_dir = market.replace("-","_") if market else "default"
-    filename = f"{execution_date[:10]}.json"
+    # filename = f"{execution_date[:10]}.json"
 
     for market in market_list:
+        filename = f'{market}-{execution_date}.json'
         storage_position = f"{market}/{filename}"
         print('storage_position', storage_position)
-        init_blob_path = f"{market}/.init"
-        print('init_blob_path', init_blob_path)
-
-        try:
-            blob_client = container_client.get_blob_client(init_blob_path)
-            if not blob_client.exists():
-                blob_client.upload_blob(b"", overwrite=True)
-                print(f"📁 Market 디렉토리 초기화: {market}")
-        except Exception as e:
-            print(f"❗ Market 디렉토리 초기화 실패: {e}")
+        # init_blob_path = f"{market}/.init"
+        # print('init_blob_path', init_blob_path)
+        #
+        # try:
+        #     blob_client = container_client.get_blob_client(init_blob_path)
+        #     if not blob_client.exists():
+        #         blob_client.upload_blob(b"", overwrite=True)
+        #         print(f"📁 Market 디렉토리 초기화: {market}")
+        # except Exception as e:
+        #     print(f"❗ Market 디렉토리 초기화 실패: {e}")
 
         try:
             blob_client = container_client.get_blob_client(storage_position)
