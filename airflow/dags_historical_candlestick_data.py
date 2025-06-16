@@ -9,7 +9,7 @@ from scripts.candlestick_daily import CandleStickDailyOperator
 from airflow.operators.python import PythonOperator
 import pendulum
 from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator
-
+from datetime import datetime, timedelta
 
 with DAG(
     dag_id='dags_historical_candlestick_data',
@@ -25,15 +25,16 @@ with DAG(
     while specified_date < end_date:
 
         execution_date = specified_date.format('YYYY-MM-DD')
+        execution_date_str = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
 
         candlestick_daily_data = CandleStickDailyOperator(
-            task_id=f"candlestick_daily_data_{execution_date}",
+            task_id=f"candlestick_daily_data_{execution_date_str}",
             execution_date=execution_date,
             dag=dag
         )
 
         upload_blob_task = PythonOperator(
-            task_id=f"upload_blob_task_{execution_date}",
+            task_id=f"upload_blob_task_{execution_date_str}",
             python_callable=upload_to_blob_storage,
             op_kwargs={"market_url": "https://api.upbit.com/v1/market/all",
                        "execution_date":execution_date},
