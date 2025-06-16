@@ -18,8 +18,8 @@ with DAG(
     catchup=False
 ) as dag:
 
-    start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
+    start_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 6, tz='Asia/Seoul')
     specified_date = start_date
 
     while specified_date < end_date:
@@ -43,7 +43,7 @@ with DAG(
 
         candlestick_daily_data >> upload_blob_task
         specified_date = specified_date.add(days=1)
-    #
+    
     # # 모든 날짜별 upload_blob_task 끝난 후 실행
     # run_databricks_job = DatabricksRunNowOperator(
     #     task_id="run_databricks_mart_job",
