@@ -7,8 +7,6 @@ def upload_to_blob_storage(market_url, execution_date, **kwargs):
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
 
-    execution_date_str = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
-
     ti = kwargs['ti']
     data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{execution_date}")
 
@@ -20,7 +18,7 @@ def upload_to_blob_storage(market_url, execution_date, **kwargs):
     market_list = SystemUtils.get_market_list(market_url)
 
     for market in market_list:
-        filename = f'{market}-{execution_date_str}.json'
+        filename = f'{market}-{execution_date}.json'
         storage_position = f"{market}/{filename}"
 
 

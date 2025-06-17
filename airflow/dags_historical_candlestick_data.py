@@ -25,16 +25,16 @@ with DAG(
     while specified_date < end_date:
 
         execution_date = specified_date.format('YYYY-MM-DD')
-        execution_date_str = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        #execution_date_str = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
 
         candlestick_daily_data = CandleStickDailyOperator(
-            task_id=f"candlestick_daily_data_{execution_date_str}",
+            task_id=f"candlestick_daily_data_{execution_date}",
             execution_date=execution_date,
             dag=dag
         )
 
         upload_blob_task = PythonOperator(
-            task_id=f"upload_blob_task_{execution_date_str}",
+            task_id=f"upload_blob_task_{execution_date}",
             python_callable=upload_to_blob_storage,
             op_kwargs={"market_url": "https://api.upbit.com/v1/market/all",
                        "execution_date":execution_date},
