@@ -47,7 +47,7 @@ with (DAG(
             databricks_conn_id="databricks_connectionid",
             job_id='481122602014680',  # Job ID 입력
             notebook_params={
-                "execution_date": execution_date # 필요시 전달 (원하면 고정값 가능)
+                "execution_date": previous_execution_date # 필요시 전달 (원하면 고정값 가능)
             },
             dag=dag
         )
