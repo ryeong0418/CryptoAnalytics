@@ -13,7 +13,7 @@ def upload_to_blob_storage(market_url, execution_date, **kwargs):
     data = ti.xcom_pull(task_ids=f"candlestick_daily_data_{previous_execution_date}")
 
     conn_str = Variable.get('azure_storage_connection_string')
-    container_name = 'candlestick2024'
+    container_name = 'analyticscontainer'
     blob_service_client = BlobServiceClient.from_connection_string(conn_str)
     container_client = blob_service_client.get_container_client(container_name)
 
