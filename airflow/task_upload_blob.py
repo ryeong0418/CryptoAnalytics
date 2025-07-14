@@ -14,14 +14,14 @@ from scripts.upload_to_storage import upload_to_blob_storage
 from scripts.candlestick_daily import CandleStickDailyOperator
 
 with (DAG(
-    dag_id='dags_historical_candlestick_data',
+    dag_id='task_upload_blob',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule='@once',
     catchup=False
 ) as dag):
 
     start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 12, 31, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
     specified_date = start_date
 
     while specified_date < end_date:
