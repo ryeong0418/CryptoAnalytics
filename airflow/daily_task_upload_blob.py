@@ -5,7 +5,7 @@ import pendulum
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
+from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator
 
 
 # sys.path.append('/opt/airflow/plugins')
@@ -14,14 +14,14 @@ from scripts.upload_to_storage import upload_to_blob_storage
 from scripts.candlestick_daily import CandleStickDailyOperator
 
 with (DAG(
-    dag_id='dags_historical_candlestick_data',
+    dag_id='daily_task_upload_blob',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule='@once',
     catchup=False
 ) as dag):
 
     start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 12, 31, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
     specified_date = start_date
 
     while specified_date < end_date:
@@ -44,17 +44,17 @@ with (DAG(
             dag=dag
         )
 
-        # run_databricks_job = DatabricksRunNowOperator(
-        #     task_id=f"run_databricks_mart_job_{previous_execution_date}",
-        #     databricks_conn_id="databricks_connectionid",
-        #     job_id='481122602014680',  # Job ID 입력
-        #     notebook_params={
-        #         "execution_date": previous_execution_date # 필요시 전달 (원하면 고정값 가능)
-        #     },
-        #     dag=dag
-        # )
+        run_databricks_job = DatabricksRunNowOperator(
+            task_id=f"run_databricks_mart_job_{previous_execution_date}",
+            databricks_conn_id="databricks_connectionid",
+            job_id='481122602014680',  # Job ID 입력
+            notebook_params={
+                "execution_date": previous_execution_date # 필요시 전달 (원하면 고정값 가능)
+            },
+            dag=dag
+        )
 
-        #candlestick_daily_data >> upload_blob_task >> run_databricks_job
-        candlestick_daily_data >> upload_blob_task
+        candlestick_daily_data >> upload_blob_task >> run_databricks_job
+        # candlestick_daily_data >> upload_blob_task
         specified_date = specified_date.add(days=1)
 
