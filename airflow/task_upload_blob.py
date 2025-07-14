@@ -39,7 +39,7 @@ with (DAG(
             python_callable=upload_to_blob_storage,
             op_kwargs={"market_url": "https://api.upbit.com/v1/market/all",
                        "execution_date":execution_date},
-            provide_context=True,
+            # provide_context=True,
             dag=dag
         )
 
