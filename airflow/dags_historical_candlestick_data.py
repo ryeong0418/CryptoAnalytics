@@ -15,7 +15,8 @@ from scripts.candlestick_daily import CandleStickDailyOperator
 with (DAG(
     dag_id='dags_historical_candlestick_data',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
-    schedule_interval='@once',
+    #schedule_interval='@once',
+    schedule = '@once',
     catchup=False
 ) as dag):
 
