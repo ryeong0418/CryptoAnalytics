@@ -32,7 +32,7 @@ with (DAG(
                                    ).strftime('%Y-%m-%d')
 
         candlestick_task = CandleStickDailyOperator(
-            task_id=f"candlestick_task {previous_execution_date}",
+            task_id=f"candlestick_task_{previous_execution_date}",
             execution_date=execution_date,
             dag=dag
         )
