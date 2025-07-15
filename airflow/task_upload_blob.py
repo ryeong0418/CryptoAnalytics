@@ -17,20 +17,22 @@ with (DAG(
     dag_id='task_upload_blob',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule='@once',
+    max_active_tasks=1,
     catchup=False
 ) as dag):
 
     start_date = pendulum.datetime(2024, 1, 2, tz='Asia/Seoul')
     end_date = pendulum.datetime(2025, 1, 1, tz='Asia/Seoul')
     specified_date = start_date
+    previous_task = None
 
     while specified_date < end_date:
         execution_date = specified_date.format('YYYY-MM-DD')
         previous_execution_date = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)
                                    ).strftime('%Y-%m-%d')
 
-        candlestick_daily_data = CandleStickDailyOperator(
-            task_id=f"candlestick_daily_data_{previous_execution_date}",
+        candlestick_task = CandleStickDailyOperator(
+            task_id=f"candlestick_task {previous_execution_date}",
             execution_date=execution_date,
             dag=dag
         )
@@ -44,17 +46,12 @@ with (DAG(
             dag=dag
         )
 
-        # run_databricks_job = DatabricksRunNowOperator(
-        #     task_id=f"run_databricks_mart_job_{previous_execution_date}",
-        #     databricks_conn_id="databricks_connectionid",
-        #     job_id='481122602014680',  # Job ID 입력
-        #     notebook_params={
-        #         "execution_date": previous_execution_date # 필요시 전달 (원하면 고정값 가능)
-        #     },
-        #     dag=dag
-        # )
+        candlestick_task >> upload_blob_task
 
-        #candlestick_daily_data >> upload_blob_task >> run_databricks_job
-        candlestick_daily_data >> upload_blob_task
+        if previous_task:
+            print(f"{previous_task.task_id} >> {candlestick_task.task_id}")
+            previous_task >> candlestick_task
+
+        previous_task = upload_blob_task
         specified_date = specified_date.add(days=1)
 
