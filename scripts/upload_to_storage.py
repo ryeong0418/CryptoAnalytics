@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 
 def upload_to_blob_storage(market_url, execution_date, **kwargs):
+    print(f"[UPLOAD] 시작: {execution_date}")
 
     from azure.storage.blob import BlobServiceClient
     from airflow.models import Variable
