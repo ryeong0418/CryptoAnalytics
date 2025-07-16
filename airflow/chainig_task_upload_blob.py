@@ -21,8 +21,8 @@ with (DAG(
     catchup=False
 ) as dag):
 
-    start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
+    start_date = pendulum.datetime(2024, 3, 27, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2025, 1, 2, tz='Asia/Seoul')
     specified_date = start_date
     previous_task = None
 
