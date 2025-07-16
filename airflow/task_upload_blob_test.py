@@ -17,7 +17,7 @@ default_args = {
 with DAG(
     dag_id="task_upload_blob_test",
     default_args=default_args,
-    schedule_interval="@daily",  # 매일 자정 실행
+    schedule="@daily",  # 매일 자정 실행
     start_date=pendulum.datetime(2024, 1, 1, tz="Asia/Seoul"),
     end_date=pendulum.datetime(2024, 1, 10, tz="Asia/Seoul"),  # 12월 31일까지
     max_active_runs=1,  # DAG 실행은 한 번에 하나만

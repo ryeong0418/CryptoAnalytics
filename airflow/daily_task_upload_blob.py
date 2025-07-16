@@ -14,7 +14,7 @@ from scripts.upload_to_storage import upload_to_blob_storage
 from scripts.candlestick_daily import CandleStickDailyOperator
 
 with (DAG(
-    dag_id='test',
+    dag_id='daily_task_upload_blob',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule='@once',
     max_active_tasks=1,
