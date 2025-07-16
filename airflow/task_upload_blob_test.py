@@ -20,7 +20,7 @@ def upload_to_blob_storage(market_url, **context):
     previous_execution_date = (datetime.strptime(execution_date, "%Y-%m-%d") - timedelta(days=1)).strftime(
         "%Y-%m-%d")
 
-    data = context["ti"].xcom_pull(task_ids=f"candlestick_task")
+    data = context["ti"].xcom_pull(task_ids="candlestick_task", map_index=None)
 
     conn_str = Variable.get('azure_storage_connection_string')
     container_name = 'analyticscontainer'
