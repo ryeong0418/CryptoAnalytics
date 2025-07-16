@@ -25,8 +25,8 @@ with DAG(
 ) as dag:
 
     candlestick_task = CandleStickDailyOperator(
-        task_id="candlestick_task",
-        execution_date="{{ ds }}",  # Jinja 템플릿으로 실행 날짜 주입
+        task_id="candlestick_task"
+        #execution_date="{{ ds }}",  # Jinja 템플릿으로 실행 날짜 주입
     )
 
     upload_blob_task = PythonOperator(
@@ -34,7 +34,7 @@ with DAG(
         python_callable=upload_to_blob_storage,
         op_kwargs={
             "market_url": "https://api.upbit.com/v1/market/all",
-            "execution_date": "{{ ds }}"  # 템플릿으로 넘김
+            #"execution_date": "{{ ds }}"  # 템플릿으로 넘김
         },
     )
 
