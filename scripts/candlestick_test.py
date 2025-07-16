@@ -16,7 +16,7 @@ class CandleStickDailyOperator(BaseOperator):
         from scripts.common.utils import SystemUtils
 
         execution_date = context["ds"]
-        print(f'execution_date: {execution_date}')
+        print("📅 실행 날짜:", execution_date)
         result = {}
 
         market_list = SystemUtils.get_market_list(self.all_market)
@@ -37,6 +37,9 @@ class CandleStickDailyOperator(BaseOperator):
             daily_candle_data = response.json()
             data_json = json.dumps(daily_candle_data, indent=4, ensure_ascii=False)
             result[market] = data_json
-            print(result[market])
+
+            print(f"✅ [{market}] 수신 완료 (데이터 길이: {len(data_json)} 바이트)")
+
+        print(f"\n🎯 총 {len(result)}개 마켓 데이터 수집 완료")
 
         return result
