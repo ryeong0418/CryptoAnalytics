@@ -5,7 +5,7 @@ import pendulum
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator
+
 
 
 # sys.path.append('/opt/airflow/plugins')
@@ -14,14 +14,15 @@ from scripts.upload_to_storage import upload_to_blob_storage
 from scripts.candlestick_daily import CandleStickDailyOperator
 
 with (DAG(
-    dag_id='daily_task_upload_blob',
+    dag_id='test',
     start_date=pendulum.datetime(2024,3,1,tz='Asia/Seoul'),
     schedule='@once',
+    max_active_tasks=1,
     catchup=False
 ) as dag):
 
-    start_date = pendulum.datetime(2024, 1, 1, tz='Asia/Seoul')
-    end_date = pendulum.datetime(2024, 1, 5, tz='Asia/Seoul')
+    start_date = pendulum.datetime(2024, 1, 2, tz='Asia/Seoul')
+    end_date = pendulum.datetime(2024, 1, 10, tz='Asia/Seoul')
     specified_date = start_date
 
     while specified_date < end_date:
@@ -29,8 +30,8 @@ with (DAG(
         previous_execution_date = (datetime.strptime(execution_date, '%Y-%m-%d') - timedelta(days=1)
                                    ).strftime('%Y-%m-%d')
 
-        candlestick_daily_data = CandleStickDailyOperator(
-            task_id=f"candlestick_daily_data_{previous_execution_date}",
+        candlestick_task = CandleStickDailyOperator(
+            task_id=f"candlestick_task_{previous_execution_date}",
             execution_date=execution_date,
             dag=dag
         )
@@ -44,17 +45,6 @@ with (DAG(
             dag=dag
         )
 
-        run_databricks_job = DatabricksRunNowOperator(
-            task_id=f"run_databricks_mart_job_{previous_execution_date}",
-            databricks_conn_id="databricks_connectionid",
-            job_id='481122602014680',  # Job ID 입력
-            notebook_params={
-                "execution_date": previous_execution_date # 필요시 전달 (원하면 고정값 가능)
-            },
-            dag=dag
-        )
-
-        candlestick_daily_data >> upload_blob_task >> run_databricks_job
-        # candlestick_daily_data >> upload_blob_task
+        candlestick_task >> upload_blob_task
         specified_date = specified_date.add(days=1)
 
