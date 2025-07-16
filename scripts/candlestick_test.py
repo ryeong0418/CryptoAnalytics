@@ -4,20 +4,16 @@ import requests
 import json
 import time
 
-class CandleStickDailyOperator(BaseOperator):
+class CandleStickDaily(BaseOperator):
 
-    def __init__(self,  execution_date:str, **kwargs):
+    def __init__(self,   **kwargs):
         super().__init__(**kwargs)
-        self.execution = execution_date
         self.all_market = "https://api.upbit.com/v1/market/all"
         self.candles_days = 'https://api.upbit.com/v1/candles/days'
 
     def execute(self, context):
         import requests, json, time
         from scripts.common.utils import SystemUtils
-
-        print(f'self.execution: {self.execution}')
-
         execution_date = context["ds"]
         print("📅 실행 날짜:", execution_date)
         result = {}
