@@ -15,7 +15,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="task_upload_blob",
+    dag_id="task_upload_blob_test",
     default_args=default_args,
     schedule_interval="@daily",  # 매일 자정 실행
     start_date=pendulum.datetime(2024, 1, 1, tz="Asia/Seoul"),
