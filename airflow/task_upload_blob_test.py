@@ -51,8 +51,8 @@ with DAG(
 ) as dag:
 
     candlestick_task = CandleStickDailyOperator(
-        task_id="candlestick_task"
-        #execution_date="{{ ds }}",  # Jinja 템플릿으로 실행 날짜 주입
+        task_id="candlestick_task",
+        execution_date="{{ ds }}"  # Jinja 템플릿으로 실행 날짜 주입
     )
 
     # upload_blob_task = PythonOperator(
