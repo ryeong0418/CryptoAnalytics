@@ -10,14 +10,38 @@
 ![architecture](/img/architecture.jpg)
 
 ### 1️⃣ Data Source
+- Upbit OpenAPI
+  - 암호화폐 시세, 거래량, 거래대금 등의 시계열 데이터 제공
+  - JSON 형식 응답
 
 ### 2️⃣ Extract
+- Apache Airflow DAG에서 Upbit OpenAPI를 호출
+- HTTP 요청 → JSON 데이터 수신
+- Python 스크립트를 통해 구조화(DataFrame 변환)
+- 원본 데이터의 무결성을 보존하기 위해 변환 없이 저장 준비
 
 ### 3️⃣ Load
+- 수집한 데이터를 Azure Data Lake Storage Gen2에 업로드
+- 저장 구조 예시:
+>/KRW-BTC/KRW-BTC-2024-01-01.json
 
 ### 4️⃣ Transform
+- Pyspark를 활용한 대용량 병렬 처리
+- Databricks에서 Medallion Architecture 적용
+  1. **Bronze Layer**
+  - 원본 데이터 저장 (Raw)
+  2. **Silver Layer**
+  - 결측치 처리, 불필요 컬럼 제거, 시간대 변환(UTC→KST)
+  3. **Gold Layer**
+  - 집계 지표 생성 (월별 평균 수익률, 변동성, 거래량/거래대금 변화율 등)
+
 
 ### 5️⃣ Batch Processing
+- Airflow에서 Databricks Jon API를 호출하여 변환 작업 자동화
+- DAG 스케줄:
+  - 특정 시간에 실행
+  - Extract → Load → Databricks Transform 순차 실행
+- Delta Lake 포맷 사용으로 ACID 보장 및 데이터 품질 관리
 
 ### 6️⃣ Visualization
 ![visualization](/img/Tableau%20Visualization.jpg)
