@@ -1,4 +1,4 @@
-## **📌Project Name: CruptoAnalytics**
+## **📌Project Name: CryptoAnalytics**
 
 
 ## **🧾 Overview**
@@ -7,6 +7,27 @@
 
 ## 🏗️ Architecture
 
+![architecture](/img/architecture.jpg)
+
+### 1️⃣ Data Source
+
+### 2️⃣ Extract
+
+### 3️⃣ Load
+
+### 4️⃣ Transform
+
+### 5️⃣ Batch Processing
+
+### 6️⃣ Visualization
+![visualization](/img/Tableau%20Visualization.jpg)
+- Tableau에서 Gold Layer 데이터 셋 연결
+- 주요 대시보드:
+  - 월별 평균 수익률 분석
+  - 가격 vs 거래량/거래대금 상관 분석
+  - 일별 변동성 지표(고가·저가 기반)
+  - 거래량/거래대금 증감률 모니터링
+  
 
 ## 🛠️ Tech Stack
 - Orchestration: Apache Airflow (Python)
@@ -15,4 +36,5 @@
 - Processing: Azure Databricks (PySpark, Medallion Architecture)
 - Visualization: Tableau
 
-## 📂 Data Flow 
+
+
