@@ -39,7 +39,8 @@
 ### 5️⃣ Batch Processing
 - Airflow에서 Databricks Jon API를 호출하여 변환 작업 자동화
 - DAG 스케줄:
-  - 특정 시간에 실행
+  ![batch_processing](/img/batch_processing.jpg)
+
   - Extract → Load → Databricks Transform 순차 실행
 - Delta Lake 포맷 사용으로 ACID 보장 및 데이터 품질 관리
 
